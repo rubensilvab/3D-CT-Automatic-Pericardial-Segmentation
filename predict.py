@@ -80,12 +80,6 @@ TestSetcsv=csv_file.loc[csv_file['Fold'].isin(folds_test)]
 TestSetcsv.reset_index(drop=True, inplace=True)
  
 
-
-"""Só depois de um certo paciente, para caso que por alguma razão falhe até px"""
-# patients=sorted(TestSetcsv['Patient'])
-# pat_begin=patients[241:]
-# TestSetcsv=csv_file.loc[csv_file['Patient'].isin(pat_begin)]
-
 """Apply DataLoader"""
 TestDataset = PatientCustomTestsetCSVdcm(TestSetcsv,transform=transform)
 Test_dl= DataLoader(TestDataset, batch_size=1, shuffle=False)
@@ -127,18 +121,6 @@ with torch.no_grad():
         pred=predict(model,img,mask,my_device)
         actual_batch=pred.shape[0]
         
-        """Remove padding (if necessary)"""
-        # indices_to_remove = torch.where(torch.all(img == 0, dim=(0, 1, 3, 4)))[0]
-        
-        # # Create a mask to keep indices not in indices_to_remove
-        # mask_remove = torch.ones(img.shape[2], dtype=bool)
-        # mask_remove[indices_to_remove] = False
-
-        # # Use the mask to filter the tensor
-        # img= img[:, :, mask_remove, :, :]
-        # mask= mask[:, :, mask_remove, :, :]
-        # pred= pred[:, :, mask_remove, :, :]
-        
         """Post processment?"""
         
         if pp==1:
@@ -147,13 +129,10 @@ with torch.no_grad():
         """Calculate Dice Coefficient"""
         dice=dice_coefficient(pred,mask ,actual_batch,my_device)
         ExcelRowDice(path_results,dice,patient)
-        #dice=torch.tensor([0])
         save_img_results(path_results,img,pred,mask,dice,patient)
         write_nrrd(patient, path_results, mask, pred,dataset)
-        
-        
+          
         print('It remains ',len(Test_dl)-i-1,' patients. Actual patient:',patient[0])
-        
         
         # Free up memory
         del img
