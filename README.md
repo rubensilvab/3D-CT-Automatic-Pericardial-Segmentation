@@ -1,24 +1,16 @@
-# 3DPericardialSegm
+# 3D CT Automatic Pericardial Segmentation Using a Light Weight 3D CNN 
 
+## Motivation
 
+Segmentation of the heart in CT scans is highly valuable in clinical practice, as it enables the segmentation and quantification of other critical structures, such as vessels, fats, and calcifications. This, in turn, aids in monitoring and assessing the risk of cardiovascular diseases. The pericardium, a thin membranous sac that encases the heart, acts as a boundary between structures inside and outside the heart. Therefore, segmenting the pericardium could be particularly useful for examining internal heart structures. However, manually segmenting the pericardium proves to be a demanding and time consuming task, making it unsuitable for clinical settings. This has driven the development of automated segmentation methods. This study introduces an automated method for segmenting the pericardium in CT scans.
 
-## Getting started
+## Description
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+This work uses a lightweight 3D CNN capable of leveraging the 3D nature of computed tomography scans while having low memory requirements[^1].
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## References
 
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.inesctec.pt/cardiacct/3dpericardialsegm.git
-git branch -M main
-git push -uf origin main
-```
+[^1]: R. Santos, R. Baeza, V. M. Filipe, F. Renna, H. Paredes and J. Pedrosa, "Lightweight 3D CNN for the Segmentation of Coronary Calcifications and Calcium Scoring," 2024 IEEE 22nd Mediterranean Electrotechnical Conference (MELECON), Porto, Portugal, 2024, pp. 346-351, doi: 10.1109/MELECON56669.2024.10608680.
 
 ## Integrate with your tools
 
