@@ -8,6 +8,9 @@ Segmentation of the heart in CT scans is highly valuable in clinical practice, a
 
 This work uses a lightweight 3D CNN capable of leveraging the 3D nature of computed tomography scans while having low memory requirements[^1].
 
+## How to run
+
+
 ## References
 
 [^1]: R. Santos, R. Baeza, V. M. Filipe, F. Renna, H. Paredes and J. Pedrosa, "Lightweight 3D CNN for the Segmentation of Coronary Calcifications and Calcium Scoring," 2024 IEEE 22nd Mediterranean Electrotechnical Conference (MELECON), Porto, Portugal, 2024, pp. 346-351, doi: 10.1109/MELECON56669.2024.10608680.
