@@ -141,9 +141,6 @@ import gc
 
 def train_model(model,hyperparameters,Info,Train_dl,Val_dl,path_to_save):
 
-    # calculate steps per epoch for training and validation set
-    #trainSteps = len(Train_dl.dataset) // hyperparameters['batch_size']
-    #valSteps = len(Val_dl.dataset) // hyperparameters['batch_size']
     
     # initialize our optimizer and loss function
     opt = Adam(model.parameters(), lr=hyperparameters['learning_rate'])
@@ -195,13 +192,8 @@ def train_model(model,hyperparameters,Info,Train_dl,Val_dl,path_to_save):
             opt.step()
         
             # add the loss to the total training loss so far and calculate the number of correct predictions
-            #print('Já correu opt')
-            #startTimepred = time.time() 
+             
             totalTrainLoss += loss.item()  # Assuming loss is a tensor
-            #endtimepred= time.time() - startTimepred
-            #print('Time to calculate totalTrainLoss += loss.item()', endtimepred)
-            #print('Step:',steps,loss.item())
-        
             tenstepsTrainLoss += loss.item() 
             if i % 10 == 9:    # every 9 mini-batches...
                 # ...log the running loss
@@ -285,7 +277,7 @@ def train_model(model,hyperparameters,Info,Train_dl,Val_dl,path_to_save):
 
 """Define train and val sets""" 
 
-# Replace 'file_path.csv' with the path to your CSV file
+# Replace 'file_path.csv' with the path to your CSV file (this is a training with 3 datasets)
 file_path_abd = 'C:/Users/RubenSilva/Desktop/CardiacCT_peri/CHVNGE/Abdominal_5.csv'
 file_path_cfat= 'C:/Users/RubenSilva/Desktop/CardiacCT_peri/CardiacFat/CFAT_5.csv'
 file_path_osic='E:/RubenSilva/PericardiumSegmentation/Dataset/OSIC/OSIC_5.csv'
@@ -325,6 +317,8 @@ transform = transforms.Compose([
 TrainSetcsv=csv_file.loc[csv_file['Fold'].isin(folds_train)]
 ValSetcsv=csv_file.loc[csv_file['Fold'].isin(folds_val)]    
 
+"Only a way to save info inside the model"
+
 Info= {
     'Name model': 'CAN3D No Skip',
     'Dataset:': 'CHVNGE(Abdominal), CFat, OSIC',
@@ -356,7 +350,9 @@ ValDataset = PatientCustomDatasetCSVdcm(ValSetcsv,transform=transform)
 """Load SlicePind to locate the patients with the same CT Slices"""
 ind_train,N_slices_train,SliPind_train=ExtractSliceInd(TrainSetcsv)
 ind_val,N_slices_val,SliPind_val=ExtractSliceInd(ValSetcsv)
-    
+
+"""This batch sampler is picking CT Scans with the same number of slices to form the batch"""
+
 train_sampler=SubsetSampler(ind_train,N_slices_train,SliPind_train,batch_size=hyperparameters['batch_size'])
 val_sampler=SubsetSampler(ind_val,N_slices_val,SliPind_val,batch_size=hyperparameters['batch_size'])
 
