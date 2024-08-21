@@ -1,6 +1,8 @@
 # Train the model
 
-The architecture of the CAN 3D is present in the [can3d_multi_noskip.py](can3d_multi_noskip.py) script. In order to train the model you just have to load your CSV and chose the folds for training and for validation.
+The architecture of the CAN 3D is present in the [can3d_multi_noskip.py](can3d_multi_noskip.py) script.
+
+In order to train the model you just have to open the [train.py](train.py), load your CSV and chose the folds for training and for validation.
 
 
 ```python
