@@ -8,8 +8,11 @@ Segmentation of the heart in CT scans is highly valuable in clinical practice, a
 
 This work uses a lightweight 3D CNN capable of leveraging the 3D nature of computed tomography scans while having low memory requirements[^1].
 
-## How to run
+## How to get ready?
 
+- [Dataset Conversion](data)
+- [Train the model](train)
+- [Make predictions](predict)
 
 ## References
 
