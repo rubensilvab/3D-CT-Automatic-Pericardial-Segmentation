@@ -13,7 +13,7 @@ In order to run the Can 3D we have to organize the data according to this:
 
 ## CSV Creation for the Dataset 
 
-A CSV must be created for both the training and prediction of the model. Example:[Abdominal_5.csv](\Abdominal_5.csv)
+A CSV must be created for both the training and prediction of the model. Example:[Abdominal_5.csv](Abdominal_5.csv)
 
 -  NameDataset.CSV - including all relevant information to facilitate the training process
     - Patient id
@@ -23,6 +23,6 @@ A CSV must be created for both the training and prediction of the model. Example
     - Image size (x,y)
     - Number of Slices of the CT Scan
 
-The script [create_csv.py](\3dpericardialsegm\data\create_csv.py) can help you to create this csv.
+The script [create_csv.py](create_csv.py) can help you to create this csv.
                     
     
