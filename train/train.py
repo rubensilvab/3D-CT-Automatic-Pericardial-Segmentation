@@ -369,6 +369,7 @@ from can3d_multi_noskip import CAN3D
 print("[INFO] initializing the CAN3D model...")
 model=CAN3D().to(my_device)
 
+"""Choose path to save the model"""
 path_to_save='C:/Users/RubenSilva/Desktop/pytorch_test/models'
 
 train_model(model,hyperparameters,Info,Train_dl,Val_dl,path_to_save)
