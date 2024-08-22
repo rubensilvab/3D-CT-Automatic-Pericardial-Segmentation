@@ -35,6 +35,7 @@ from torchvision.io import read_image
 import nrrd as nrrd
 import random
 
+#Class that add Gaussian noise. It is employed here and not in the "transforms" because its only apllied to the Dicom File. 
 
 class AddGaussianNoise(object):
     def __init__(self, mean=0.0, std=1.0):
@@ -90,28 +91,12 @@ class PatientCustomDatasetCSVdcm(Dataset):
             imgs_mask=imgs_mask.to(torch.int8)
         
    
-        #imgs_dcm,imgs_mask =self.limit_slices(imgs_dcm, imgs_mask)
         imgs_dcm,imgs_mask = torch.unsqueeze(imgs_dcm, 0),torch.unsqueeze(imgs_mask, 0)
         imgs_dcm,imgs_mask = imgs_dcm.float(), imgs_mask.to(torch.int8)
         
-        #print('New',patient,len(np.unique(imgs_dcm)))
-        #print('New, mask',patient,np.unique(imgs_mask))
-        #imgs_dcm = imgs_dcm.to(torch.float16)
         
         return imgs_dcm, imgs_mask    
-    
-    # def plotdcm(self,train_features,train_labels):
-        
-    #     for i in range(train_features.shape[0]):
-    #         img = train_features.squeeze()[i]
-    #         label = train_labels.squeeze()[i]
-    #         plt.imshow(img, cmap="gray")
-            
-    #         alpha=0.5
-    #         plt.imshow(label,cmap="gray",alpha=alpha)
-        
-    #         plt.show()
-    
+       
     def read_img(self, file_patient,img_size):
        #print(file_patient)
        files=os.listdir(file_patient)
@@ -188,7 +173,7 @@ class PatientCustomTestsetCSVdcm(PatientCustomDatasetCSVdcm):
         
         return imgs_dcm, imgs_mask, patient
   
-           
+#Applies a Random Crop in Z            
 def RandomCrop(imgs,mask):
     
     min_slices = 30
@@ -197,7 +182,6 @@ def RandomCrop(imgs,mask):
     
     if apply_crop==1 and (z_dim > min_slices):
         
-        #print('crop')
         upper_slices = random.randint(1, int(z_dim * 0.1))
         lower_slices = random.randint(1, int(z_dim * 0.1))
     
@@ -213,12 +197,13 @@ def RandomCrop(imgs,mask):
     
 import pandas as pd    
 
+#Creates
 class SubsetSampler():
     
     def __init__(self, indices,nslices,nslicesind,batch_size, generator=None) -> None:
             self.indices = indices # [0 1 2 3 4]
-            self.nslices = nslices # [3 4 3 3 4]
-            self.nslicesind = nslicesind # [[], [], [], [1 3 4], [2 5]]
+            self.nslices = nslices # [3 4 5 5 4]
+            self.nslicesind = nslicesind # [[], [], [0], [1 4], [2 3]]
             self.generator = generator
             self.bs = batch_size
     
@@ -229,15 +214,12 @@ class SubsetSampler():
         batch=np.zeros((self.bs))
         for i in torch.randperm(len(self.indices)):
             n =self.nslices[i]
-            #batch=[self.indices[i]]
             batch[0]=self.indices[i]
             if self.nslicesind[n]:  # Ensure there is at least 1 sample 
                 for b in range(self.bs -1):
                     ii = np.random.choice(self.nslicesind[n])
-                    #batch.append(self.indices[ii])
                     batch[b+1]=ii
-                    
-            #print(batch)        
+                           
             yield batch        
                 
 from torchvision import transforms
@@ -255,9 +237,4 @@ def ExtractSliceInd(df):
         SliPind[slc].append(idx)
 
     return indices,N_slices,SliPind
-
-#         plt.imshow(label,cmap="gray",alpha=alpha)
-    
-#         plt.show()
-        
-        
+       
