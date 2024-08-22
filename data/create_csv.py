@@ -17,7 +17,8 @@ path='/Data'
 os.chdir(path)
 
 #Path of the Dicom files
-list_patients=os.listdir(os.path.join(path,"DCM"))
+path_dicom=os.path.join(path,"DCM")
+list_patients=os.listdir(path_dicom)
 #Path masks
 path_nrrd=os.path.join(path,"Peri_segm")
 
@@ -46,14 +47,14 @@ with open(name_csv+str(number_of_folds)+'.csv', 'w', newline='') as file:
         
         for patient in list_patients[init_patient:init_patient+patients_p_fold]:
             
-            n_slices=len(os.listdir(os.path.join(path,"DCM",patient)))
+            n_slices=len(os.listdir(os.path.join(path_dicom,patient)))
             
-            files_dcm=sorted(glob.glob(os.path.join(path,"DCM",patient)+'/*'))
+            files_dcm=sorted(glob.glob(os.path.join(path_dicom,patient)+'/*'))
             data = pydicom.read_file(files_dcm[0])
             dcm=data.pixel_array
             img_size=str(dcm.shape)
         
-            writer.writerow([str(patient),str(fold), os.path.join(path,"DCM",patient), os.path.join(path_nrrd,patient+".nrrd"),img_size,n_slices])
+            writer.writerow([str(patient),str(fold), os.path.join(path_dicom,patient), os.path.join(path_nrrd,patient+".nrrd"),img_size,n_slices])
             
             npp=npp+1
             print(npp,patient)
@@ -63,14 +64,14 @@ with open(name_csv+str(number_of_folds)+'.csv', 'w', newline='') as file:
     for p in list_patients[init_patient:]:
             
             #print(path_mask_img)
-            n_slices=len(os.listdir(os.path.join(path,"DCM",p)))
+            n_slices=len(os.listdir(os.path.join(path_dicom,p)))
             
-            files_dcm=sorted(glob.glob(os.path.join(path,"DCM",patient)+'/*'))
+            files_dcm=sorted(glob.glob(os.path.join(path_dicom,patient)+'/*'))
             data = pydicom.read_file(files_dcm[0])
             dcm=data.pixel_array
             img_size=str(dcm.shape)
             
-            writer.writerow([str(p),str(fold), os.path.join(path,"DCM",p), os.path.join(path_nrrd,p+".nrrd"),img_size,n_slices])
+            writer.writerow([str(p),str(fold), os.path.join(path_dicom,p), os.path.join(path_nrrd,p+".nrrd"),img_size,n_slices])
             npp=npp+1
             
             print(npp,'last ones',p)
