@@ -40,37 +40,8 @@ else:
 print('Device: {}'.format(my_device))  
 
 
-
 import pandas as pd    
 
-
-def dice_coefficient(output, target, class_index):
-    
-    smooth = 1e-5
-    # Select the probabilities for the given class index
-    output_class = output[class_index]
-    target_class = (target == class_index).float()
-    #print(target_class.size(),output_class.size())
-    #output_class=target_class
-    output_flat = output_class.view(-1)
-    target_flat = target_class.view(-1)
-    #print(target_flat.size(),output_flat.size())
-    intersection = torch.sum(output_flat * target_flat)
-    union = torch.sum(output_flat) + torch.sum(target_flat)
-    dice = (2. * intersection + smooth) / (union + smooth)
-    
-    #print(dice)
-    return dice
-
-# def dice_loss(output, target, num_classes,batch_size,device):
-#     loss = torch.zeros(batch_size).to(device)
-    
-#     for b in range(batch_size):        
-#         for class_index in range(num_classes):
-#             dice= 1 - dice_coefficient(output[b], target[b], class_index)
-#             loss[b] += 0.5 * dice
-            
-#     return loss.mean()
 
 def dice_loss(output,target, batch_size,my_device=my_device):
 
@@ -86,7 +57,7 @@ def dice_loss(output,target, batch_size,my_device=my_device):
         dice_foreground = (2. * intersection) / (union + smooth)
         
         #dice_background = torch.sum((1-target[i]) * (1-output[i])) / (torch.sum((1-target[i])**2) + torch.sum((1-output[i])**2) + 1e-7)
-        #print(dice_foreground)
+        
         loss[i] = 1 - dice_foreground #- dice_background
 
     return loss.mean()
