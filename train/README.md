@@ -8,7 +8,7 @@ In order to train the model you just have to open the [train.py](train.py), load
 ```python
 """Load CSV""" 
 # Replace 'file_path.csv' with the path to your CSV file 
-file_path_abd = 'C:/Users/RubenSilva/Desktop/CardiacCT_peri/CHVNGE/Abdominal_5.csv'
+file_path_abd = 'data/Abdominal_5.csv'
 
 # Read the CSV file into a DataFrame
 csv_file_abd = pd.read_csv(file_path_abd)
@@ -45,3 +45,12 @@ transform = transforms.Compose([
 
 ```
 And then you just have to run the [train.py](train.py) and the weights of the model will be saved in [models](\3dpericardialsegm\models) (you can change). The name of the model will be the date where the training started.
+
+This training script is compatible with Tensorboard. All the training curves can be visualized in real time using Tensorboard.
+Just run the following command in the terminal.
+
+```
+tensorboard --logdir=log/Mon_Jul_22_19_40_20_2024
+```
+
+Now check: http://localhost:6006/
