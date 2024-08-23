@@ -3,15 +3,14 @@
 In order to run the Can 3D we have to organize the data according to this:
 
 ```plaintext
-
-- NameDataset (Data)
-    -  Dicom (DCM)
-        - Patient (xxx)
-            - 37559456 (or .dcm)
-            - 37559467
-            - ...NrSlice
-    -  Mask (Peri_segm)
-        - Patient.nrrd (xxx.nrrd)
+NameDataset\ (Data)
+│    │──  Dicom (DCM)
+│    │    │── Patient (xxx)
+│    │    ├── 37559456 (or .dcm)
+│    │    ├──37559467
+│    │    ├──...NrSlice
+│    │── Mask (Peri_segm)
+│    │    ├── Patient.nrrd (xxx.nrrd)
 
 ```
 
