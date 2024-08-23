@@ -2,6 +2,8 @@
 
 In order to run the Can 3D we have to organize the data according to this:
 
+```plaintext
+
 - NameDataset (Data)
     -  Dicom (DCM)
         - Patient (xxx)
@@ -10,6 +12,8 @@ In order to run the Can 3D we have to organize the data according to this:
             - ...NrSlice
     -  Mask (Peri_segm)
         - Patient.nrrd (xxx.nrrd)
+
+```
 
 ## CSV Creation for the Dataset 
 
