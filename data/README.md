@@ -2,7 +2,7 @@
 
 In order to run the Can 3D we have to organize the data according to this:
 
-- Name Dataset New 
+- NameDataset (Data)
     -  Dicom (DCM)
         - Patient (xxx)
             - 37559456 (or .dcm)
