@@ -8,7 +8,7 @@ Created on Wed Jun  5 15:40:07 2024
 import matplotlib
 #matplotlib.use("Agg")
 # import the necessary packages
-from LeNet import LeNet
+
 from sklearn.metrics import classification_report
 from torch.utils.data import random_split
 from torch.utils.data import DataLoader
@@ -30,7 +30,7 @@ import os
 from torch.utils.data import Dataset
 import torch.nn.functional as F
 from torchvision.io import read_image
-from CustomDatasets import PatientCustomTestsetCSV
+
 import openpyxl
 
 
@@ -123,27 +123,85 @@ def reshape_nrrd(data):
 
 import nrrd
 
-def write_nrrd(patient,path,mask,pred, dataset):
+def RealThickness(dcm1,dcm2):
+    th1=dcm1.ImagePositionPatient[-1]
+    th2=dcm2.ImagePositionPatient[-1]
+    realthk=abs(th1-th2)
+        
+    return realthk
+
+def OrderSlices(files,path_patient):
     
-    mask=np.squeeze(mask.cpu().numpy())
+    n_slices=len(files)
+    slices=[]
+    zcoords=[]
+    for i, file in enumerate(files):
+        
+        img = pydicom.read_file(os.path.join(path_patient,file))
+        zcoords.append(img.get('ImagePositionPatient')[2])
+        slices.append(file)
+        
+    order = [i for i in range(n_slices)]
+    new_order = [i for z, i in sorted(zip(zcoords, order))][::-1] 
+    
+    reordered_slices = [slices[i] for i in new_order]
+    
+    return reordered_slices
+
+import pydicom
+
+def load_header(patient,csv_file):
+    
+    row_patient=csv_file.loc[csv_file['Patient'] == patient[0]]
+    file_mask =row_patient['Path_Mask'].iloc[0]
+    img_size=row_patient['Img_Size'].iloc[0]
+    img_size=img_size.split(',')
+    img_size = [int(img_size[0][1:]), int(img_size[1][:-1])]
+    
+    _, header = nrrd.read(file_mask)
+    
+    return header,img_size
+    
+def create_header(patient,image_dir):
+    
+    file_patient =os.path.join(image_dir,patient[0])
+    
+    #find img_shape
+    slices=os.listdir(file_patient)
+    img = pydicom.read_file(os.path.join(file_patient,slices[0]))
+    img = img.pixel_array
+    img_size=[img.shape[0],img.shape[1]]
+    
+    files=os.listdir(file_patient)
+    files_dcm=OrderSlices(files,file_patient)
+    
+    # Extract metadata from the first and scd DICOM file
+    first_dicom,scd_dicom = pydicom.read_file(os.path.join(file_patient,files_dcm[0])),pydicom.read_file(os.path.join(file_patient,files_dcm[1]))
+    spacing = [float(first_dicom.PixelSpacing[0]), float(first_dicom.PixelSpacing[1]), float(RealThickness(first_dicom,scd_dicom))]
+    
+    last_dicom=pydicom.read_file(os.path.join(file_patient,files_dcm[-1]))
+    
+    # Create NRRD header
+    o_img_shape=(len(files),img_size[0],img_size[1])
+    
+    header = {
+        'type': 'uint8',
+        'dimension': 3,
+        'sizes':o_img_shape,
+        'space': 'left-posterior-superior',
+        'space directions': np.diag(spacing),
+        'kinds': ['domain', 'domain', 'domain'],
+        'endian': 'little',
+        'encoding': 'gzip',
+        'space origin': last_dicom.ImagePositionPatient
+    }
+    
+    return header,img_size
+
+def write_nrrd(patient,path,header,pred, dataset):
+    
     pred=np.squeeze(pred.cpu().numpy())
-    
-    if dataset=='Abdominal':
         
-        file_path='C:/Users/RubenSilva/Desktop/CardiacCT_peri/CHVNGE/PERI_segm'
-        
-    elif dataset=='EPICHEART':
-        file_path='C:/Users/RubenSilva/Desktop/CardiacCT_peri/CHVNGE/EPICHEART/carol'
-    
-    elif dataset=='CardiacFat':     
-        file_path='C:/Users/RubenSilva/Desktop/CardiacCT_peri/CardiacFat/Peri_segm'
-        
-    else:
-        file_path='E:/RubenSilva/PericardiumSegmentation/Dataset/OSIC/Peri_segm'
-        
-    file=os.path.join(file_path,str(patient[0])+'.nrrd')
-    header = nrrd.read_header(file)
-    
     path_patient=os.path.join(path,str(patient[0]),'NRRD')
     isExist = os.path.exists(path_patient)
     if not isExist:                         
@@ -154,21 +212,19 @@ def write_nrrd(patient,path,mask,pred, dataset):
     print('Writing NRRD...')
     nrrd.write(str(patient[0])+'_pred'+'.nrrd', reshape_nrrd(pred),header=header)
     
-def predict(model,img,mask, device):
+def predict(model,img,img_size, device):
     #make the predictions and calculate the validation loss
     pred = model(img)
-    predict = torch.zeros(mask.shape).to(device)
+    img_shape=img.shape
+    # Create a new torch.Size object with updated dimensions
+    new_img_shape = torch.Size(img_shape[:3] + (img_size[0], img_size[1]))
+    
+    predict = torch.zeros(new_img_shape).to(device)
     
     actual_batch=pred.shape[0]
     for b in range(actual_batch):
-        #print('before',len(np.unique(pred[b].detach().cpu().numpy())))
-        #pred[b] = pred[b].to(torch.float16)
-        #pred[b] = (pred[b] >= 0.5).to(torch.uint8)
-        #print('after',len(np.unique(pred[b].detach().cpu().numpy())))
-        predict[b]= F.interpolate(pred[b], size=(mask.shape[3], mask.shape[4]), mode='bilinear')
-        #print(np.unique(predict[b].cpu()))
+    
+        predict[b]= F.interpolate(pred[b], size=(img_size[0], img_size[1]), mode='bilinear')
         predict[b]= (predict[b] >= 0.5).to(torch.uint8)
         
-        #print(np.unique(predict[b].cpu()))
-    #pred= (pred >= 0.5).to(torch.uint8)   
     return predict.to(torch.uint8)    
