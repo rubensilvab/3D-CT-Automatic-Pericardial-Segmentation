@@ -43,7 +43,8 @@ If you just have the Dicom files, I recommend to run the [predict_only.py](predi
 
 Otherwise, this script will create a header for the NRRD with the metadata retrieved directly from the Dicom files. 
 
-You need just to choose the input folder:
+You have to choose and load the model like the other method. Instead of using a CSV, now you just need to choose the input folder:
+
 ```python
 """Choose input folder"""
 img_dir='data/DCM'
