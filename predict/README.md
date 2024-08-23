@@ -6,7 +6,7 @@ If you have the Ground Truth, I recommend to follow this method.
 
 First of all, ensure that the data is in the correct format, as indicated in the [Data](\3dpericardialsegm\data). Be sure that you have the CSV created and Pytorch installed in your device.
 
-Then you have just to run the [predict.py](predict.py) script.
+Then you have just to run the [predict_and_dice.py](predict_and_dice.py) script.
 Does not forget to select the CSV and load the CSV of your data.
 
 ```python
@@ -39,7 +39,7 @@ Run and the predictions will be in the "path_results"!
 
 ## Make predictions when do you not have the Ground Truth
 
-If you just have the Dicom files, I recommend to run the [predict_only.py](predict_only.py) script. You don't need to create a CSV.
+If you just have the Dicom files, I recommend to run the [predict.py](predict.py) script. You don't need to create a CSV.
 
 Otherwise, this script will create a header for the NRRD with the metadata retrieved directly from the Dicom files. 
 
